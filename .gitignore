@@ -1,0 +1,6 @@
+application.sh
+terraform/
+*.log
+*.pyc
+.DS_Store
+env/

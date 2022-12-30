@@ -1,0 +1,17 @@
+
+# List of the default required tags. Presence of these
+# tags will be checked in all resources.
+default_tags:
+  - Tag1 
+  - Tag2
+  - Tag3
+
+# Additional tags may be required by a particular resource(s).
+addtional_tags:
+  aws_iam_role:
+    - Tag4
+
+# Mandatory tags that can be ignored by a particular resource(s).
+ignored_tags:
+  aws_iam_policy:
+    - Tag3
