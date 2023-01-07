@@ -8,7 +8,7 @@ You want to be sure that the tag policy defined in your organization is being en
 
 ## What formats of the state file and plan file are supported?
 
-Currently only format version **4** for the state file and version **1.1** for the plan file are supported.
+Currently, format version **4** for the state file, and version **1.1** for the plan file are supported.
 
 ## Defining tag policy
 
@@ -16,7 +16,7 @@ You can define the *default_tags* tags to apply to all resources to be created i
 
 In addition for a particular resource, you can define *addtional_tags* tags to checks or define *ignored_tags* to ignore a particular tag.
 
-You needed to create a file named `.default_tags.yml` with the following content:
+You needed to create the file `.default_tags.yml` with similar content as shown below:
 
 ```
 default_tags:
@@ -35,6 +35,7 @@ ignored_tags:
     - Tag3
 ```
 
+Check for *examples* folder for more details.
 
 
 # Invoking the script
@@ -42,7 +43,7 @@ ignored_tags:
 ## Checking the state file
 
 ```
-python application.py --input_type state --input_file terraform.tfstate
+python application.py -v --input_type state --input_file terraform.tfstate 
 ```
 
 ## Checking the plan file
@@ -51,47 +52,121 @@ First you need to generate a json output of your terraform plan. You can use the
 
 ```
 terraform plan -out terraform.plan
-terraform show -json terraform.plan | jq > terraform.plan.formatted.json
+terraform show -json terraform.plan | jq > terraform.plan.json
 ```
 
-and run 
+and then run 
 
 ```
-python application.py --input_type plan --input_file terraform.plan.formatted.json
+python application.py -v --input_type state --input_file terraform.plan.json 
 ```
 
-For more information about other arguments, invoke the script `python application.py`.
+For more information about other arguments, invoke the script `python application.py --help`.
 
-## Results
+## Checking tag compliance in the plan file
 
+You can try the script with content of the examples folder. 
 
-The example below shows findings from the script:
+By running  
 
 ```
-------------------------------
-name          : example
-arn           : arn:aws:iam::111122223333:policy/example_policy
+python application.py -v \
+    --input_type plan \
+    --input_file ./examples/terraform.plan.json \
+    --tag_file ./examples/default_tags.yml
+```
+
+you will get the following output:
+
+```
+Fetching managed AWS resources from Plan file.
+----------------------------------------------------------------------
+address       : aws_iam_policy.policy_1
+name          : policy_1
 type          : aws_iam_policy
-current tags  : Tag1, Tag2, Tag5
-required tags : Tag1, Tag2
+current tags  : Compliance, Department, Description, Environment, Owner, Version
+required tags : Owner, Environment, Department, Compliance, Version, Description
 missing tags  : -
 tag compliance: Passed
-------------------------------
-name          : example
-arn           : arn:aws:iam::111122223333:role/example_role
-type          : aws_iam_role
-current tags  : Tag1, Tag2
-required tags : Tag1, Tag2, Tag3, Tag4
-missing tags  : Tag3, Tag4
+----------------------------------------------------------------------
+address       : aws_iam_policy.policy_1_1
+name          : policy_1_1
+type          : aws_iam_policy
+current tags  : Compliance, Department, Environment, Owner, Version
+required tags : Owner, Environment, Department, Compliance, Version, Description
+missing tags  : Description
 tag compliance: Failed
-------------------------------
-name          : example2
-arn           : arn:aws:iam::111122223333:role/example2_role
+----------------------------------------------------------------------
+address       : aws_iam_role.role_1
+name          : role_1
 type          : aws_iam_role
-current tags  : Tag1, Tag2, Tag3, Tag4
-required tags : Tag1, Tag2, Tag3, Tag4
+current tags  : Compliance, Department, Environment, Owner
+required tags : Owner, Environment, Department, Compliance
 missing tags  : -
 tag compliance: Passed
----------------------------------------------------------------
-Summary: 1 out of 3 managed resources is not in tag-compliance.
+----------------------------------------------------------------------
+address       : aws_iam_role.role_2
+name          : role_2
+type          : aws_iam_role
+current tags  : Department, Environment, Owner
+required tags : Owner, Environment, Department, Compliance
+missing tags  : Compliance
+tag compliance: Failed
+----------------------------------------------------------------------
+Summary: 2 out of 4 managed resources are not in tag-compliance.
 ```
+
+## Checking tag compliance in the state file
+
+Likewise, by running:
+
+```
+python application.py -v \
+    --input_type state \
+    --input_file ./examples/terraform.tfstate  \
+    --tag_file ./examples/default_tags.yml
+```
+
+you should get the following output:
+
+```
+etching managed AWS resources from State file.
+----------------------------------------------------------------------
+name          : policy_1
+arn           : arn:aws:iam::4468********:policy/example_policy_1
+type          : aws_iam_policy
+current tags  : Compliance, Department, Description, Environment, Owner, Version
+required tags : Owner, Environment, Department, Compliance, Version, Description
+missing tags  : -
+tag compliance: Passed
+----------------------------------------------------------------------
+name          : policy_1_1
+arn           : arn:aws:iam::4468********:policy/example_policy_1_1
+type          : aws_iam_policy
+current tags  : Compliance, Department, Environment, Owner, Version
+required tags : Owner, Environment, Department, Compliance, Version, Description
+missing tags  : Description
+tag compliance: Failed
+----------------------------------------------------------------------
+name          : role_1
+arn           : arn:aws:iam::4468********:role/example_role1
+type          : aws_iam_role
+current tags  : Compliance, Department, Environment, Owner
+required tags : Owner, Environment, Department, Compliance
+missing tags  : -
+tag compliance: Passed
+----------------------------------------------------------------------
+name          : role_2
+arn           : arn:aws:iam::4468********:role/example_role2
+type          : aws_iam_role
+current tags  : Department, Environment, Owner
+required tags : Owner, Environment, Department, Compliance
+missing tags  : Compliance
+tag compliance: Failed
+----------------------------------------------------------------------
+Summary: 2 out of 4 managed resources are not in tag-compliance.
+```
+
+## Loggging
+
+After either run, the script will create the log file *application.plan.log* if you were checking tag compliance on the plan file; likewise, it will will create the log file *application.state.log* if you were checking tag compliance in the state file.
