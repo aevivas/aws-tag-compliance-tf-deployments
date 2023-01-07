@@ -4,3 +4,4 @@ terraform/
 *.pyc
 .DS_Store
 env/
+*.txt
