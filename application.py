@@ -176,23 +176,43 @@ def get_managed_resources_from_statefile(data) -> list:
 
     resources = []
     for resource in data['resources']:
-        logging.info(f"resource in file: {resource}")
-        if resource['mode'] == 'managed' and resource['provider'] == "provider[\"registry.terraform.io/hashicorp/aws\"]":
-            arn = resource['instances'][0]['attributes'].get('arn', None)
-            if arn:
-                temp_res = {}
-                temp_res['rtype'] = resource['type']
-                temp_res['mode'] = resource['mode']
-                temp_res['name'] = resource['name']
-                temp_res['module'] = resource.get('module', None)
-                temp_res['arn'] = arn
-                temp_res['tags'] = resource['instances'][0]['attributes'].get(
-                    'tags', {})
-                temp_res['tags_all'] = resource['instances'][0]['attributes'].get(
-                    'tags_all', {})
+        resource_name = resource['name']
 
-                logging.info(f"resource selected: {temp_res}")
-                resources.append(temp_res)
+        logging.info(f"Details for resource: {resource_name}: {resource}")
+
+        if resource['mode'] != 'managed':
+            logging.info(
+                f"Skipping {resource_name} because is not a managed resource")
+            continue
+
+        if resource['provider'] != "provider[\"registry.terraform.io/hashicorp/aws\"]":
+            logging.info(f"Skipping {resource_name} because is not in AWS")
+            continue
+
+        if 'arn' not in resource['instances'][0]['attributes'].keys():
+            logging.info(
+                f"Skipping {resource_name} because it does not have ARN")
+            continue
+
+        if 'tags' not in resource['instances'][0]['attributes'].keys():
+            logging.info(
+                f"Skipping {resource_name} because it does not support tags")
+            continue
+
+        temp_res = {}
+        temp_res['rtype'] = resource['type']
+        temp_res['mode'] = resource['mode']
+        temp_res['name'] = resource['name']
+        temp_res['module'] = resource.get('module', None)
+        temp_res['arn'] = resource['instances'][0]['attributes']['arn']
+        temp_res['tags'] = resource['instances'][0]['attributes']['tags']
+        temp_res['tags_all'] = resource['instances'][0]['attributes']['tags_all']
+
+        logging.info(
+            f"Selecting resource {resource_name} with extracted values: {temp_res}")
+
+        resources.append(temp_res)
+
     return resources
 
 
@@ -238,20 +258,30 @@ def get_managed_resources_from_planfile(data) -> list:
     resources = []
 
     for resource in all_resources:
-        logging.info(f"resource in file: {resource}")
 
-        if resource['provider_name'] == "registry.terraform.io/hashicorp/aws":
-            if 'tags' in resource['values']:
-                temp_res = {}
-                temp_res['rtype'] = resource['type']
-                temp_res['name'] = resource['name']
-                temp_res['address'] = resource['address']
-                temp_res['tags'] = resource['values']['tags']
-                temp_res['tags_all'] = resource['values'].get('tags_all', None)
+        resource_name = resource['name']
+        logging.info(f"Details for resource: {resource_name}: {resource}")
 
-                logging.info(f"resource selected: {temp_res}")
+        if resource['provider_name'] != "registry.terraform.io/hashicorp/aws":
+            logging.info(f"Skipping {resource_name} because is not in AWS")
+            continue
 
-                resources.append(temp_res)
+        if 'tags' not in resource['values']:
+            logging.info(
+                f"Skipping {resource_name} because it does not support tags")
+            continue
+
+        temp_res = {}
+        temp_res['rtype'] = resource['type']
+        temp_res['name'] = resource['name']
+        temp_res['address'] = resource['address']
+        temp_res['tags'] = resource['values']['tags']
+        temp_res['tags_all'] = resource['values'].get('tags_all', None)
+
+        logging.info(
+            f"Selecting resource {resource_name} with extracted values: {temp_res}")
+
+        resources.append(temp_res)
 
     return resources
 
@@ -344,7 +374,7 @@ if __name__ == '__main__':
 
     parser.add_argument(
         '--tag_file',
-        default="default_tags.yml",
+        default="./default_tags.yml",
         help="(default: %(default)s)")
 
     args = parser.parse_args()
