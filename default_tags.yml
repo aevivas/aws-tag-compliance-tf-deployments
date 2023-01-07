@@ -1,4 +1,3 @@
-
 # List of the default required tags. Presence of these
 # tags will be checked in all resources.
 default_tags:
