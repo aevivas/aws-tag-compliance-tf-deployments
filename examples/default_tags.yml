@@ -1,0 +1,14 @@
+default_tags:
+  - Owner 
+  - Environment
+  - Department
+  - Compliance
+
+addtional_tags:
+  aws_iam_policy:
+    - Version
+    - Description
+    
+ignored_tags:
+  aws_iam_group:
+    - Compliance
