@@ -24,12 +24,10 @@ default_tags:
   - Tag2
   - Tag3
 
-# Additional tags may be required by a particular resource(s).
 addtional_tags:
   aws_iam_role:
     - Tag4
 
-# Mandatory tags that can be ignored by a particular resource(s).
 ignored_tags:
   aws_iam_policy:
     - Tag3
@@ -42,32 +40,40 @@ Check for *examples* folder for more details.
 
 ## Checking the state file
 
+You check the tag compliance in the plan file by running
+
 ```
 python application.py -v --input_type state --input_file terraform.tfstate 
 ```
 
 ## Checking the plan file
 
-First you need to generate a json output of your terraform plan. You can use the following commands:
+First you need to generate a json output of your terraform plan using the following commands:
 
 ```
 terraform plan -out terraform.plan
 terraform show -json terraform.plan | jq > terraform.plan.json
 ```
 
-and then run 
+and then You check the tag compliance in the plan file by running
 
 ```
 python application.py -v --input_type state --input_file terraform.plan.json 
 ```
 
+The script will output which resources are not in compliance with your tag policies.
+
 For more information about other arguments, invoke the script `python application.py --help`.
+
+
+# Trying the script
+
+The *terraform* contains a configuration file you can use to generate a plan and a state files. Navigate to the folder *terraform* and run the script *./terraform.sh*. This script will create a plan, apply, and then destroy the resources; additionally, it will copy the plan and state files to the *examples* folder.
+
 
 ## Checking tag compliance in the plan file
 
-You can try the script with content of the examples folder. 
-
-By running  
+Run the script as shown below to check tag compliance of the just-created plan file by terraform.
 
 ```
 python application.py -v \
@@ -118,7 +124,7 @@ Summary: 2 out of 4 managed resources are not in tag-compliance.
 
 ## Checking tag compliance in the state file
 
-Likewise, by running:
+Likewise, you can check the tag compliance in the state file by running:
 
 ```
 python application.py -v \
@@ -167,6 +173,6 @@ tag compliance: Failed
 Summary: 2 out of 4 managed resources are not in tag-compliance.
 ```
 
-## Loggging
+## Logging
 
-After either run, the script will create the log file *application.plan.log* if you were checking tag compliance on the plan file; likewise, it will will create the log file *application.state.log* if you were checking tag compliance in the state file.
+After either run, the script will create the log file *application.plan.log* if you were checking tag compliance in the plan file; likewise, it will will create the log file *application.state.log* if you were checking tag compliance in the state file.
