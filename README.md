@@ -16,24 +16,44 @@ You can define the *default_tags* tags to apply to all resources to be created i
 
 In addition for a particular resource, you can define *addtional_tags* tags to checks or define *ignored_tags* to ignore a particular tag.
 
-You needed to create the file `.default_tags.yml` with similar content as shown below:
+You needed to create the tag policy with the following sections:
+
+### Default tags
+
+List of the default tags to apply to all resources:
 
 ```
 default_tags:
   - Tag1 
   - Tag2
   - Tag3
-
-addtional_tags:
-  aws_iam_role:
-    - Tag4
-
-ignored_tags:
-  aws_iam_policy:
-    - Tag3
 ```
 
-Check for *examples* folder for more details.
+### Additional tags (optional)
+
+Addional tags to appy to particular resource types
+
+```
+addtional_tags:
+  resource_type:
+    - Tag4
+  resource_type
+    - Tag6
+```
+
+### Ignored tags (optional)
+
+Tags that can be ignored for particular resource types
+
+```
+ignored_tags:
+  resource_type:
+    - Tag7
+  resource_type:
+    - Tag8
+```
+
+You  can check the template `.default_tags.yml` in this folder or the file in `examples/.default_tags.yml` for an example.
 
 
 # Invoking the script
