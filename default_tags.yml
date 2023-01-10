@@ -5,12 +5,14 @@ default_tags:
   - Tag2
   - Tag3
 
-# Additional tags may be required by a particular resource(s).
+# Additional tags may be required by (a) particular aws resource(s).
+# Use the name of the resource_type in terraform 
 addtional_tags:
-  aws_iam_role:
+  resource_type:
     - Tag4
 
-# Mandatory tags that can be ignored by a particular resource(s).
+# Mandatory tags that can be ignored by a particular aws resource(s).
+# Use the name of the resource_type in terraform 
 ignored_tags:
-  aws_iam_policy:
-    - Tag3
+  resource_type:
+    - Tag5
