@@ -1,6 +1,7 @@
 application.sh
 terraform/.terraform.lock.hcl
 terraform/.terraform/
+terraform/terraform.*
 *.log
 *.pyc
 .DS_Store
