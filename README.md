@@ -1,24 +1,20 @@
 # Validating Tag Compliance for Terraform Deployments in AWS
 
-Script to check that AWS managed resources in the terraform state file or terraform plan file are using the required tags for the deployment.
+Script to check that AWS managed resources in the terraform state file or terraform plan file are using the required tags for the deployment. The required tags are based on workplace, or project preferences.
 
-## Why?
+## Motivation
 
-You want to be sure that the tag policy defined in your organization is being enforced. It is easy to tag devices hence this script can provide you some assistance on identifying those AWS resources missing any of the tags.
+You want to be sure that the tag policy defined in your organization is being enforced. It is easy miss a tag when writing your terraform code; hence this script can provide you some assistance on identifying those AWS resources missing any of the required tags.
 
-## What formats of the state file and plan file are supported?
+## Supported versions for state and plan files
 
 Currently, format version **4** for the state file, and version **1.1** for the plan file are supported.
 
 ## Defining tag policy
 
-You can define the *default_tags* tags to apply to all resources to be created in your deployment or if they are already deployed. 
+You can define your tag policy by creating a file with the following sections:
 
-In addition for a particular resource, you can define *addtional_tags* tags to checks or define *ignored_tags* to ignore a particular tag.
-
-You needed to create the tag policy with the following sections:
-
-### Default tags
+### Default tags (required)
 
 List of the default tags to apply to all resources:
 
@@ -53,35 +49,35 @@ ignored_tags:
     - Tag8
 ```
 
-You  can check the template `.default_tags.yml` in this folder or the file in `examples/.default_tags.yml` for an example.
+You can check the template `.default_tags.yml` in this folder more details or the file `examples/.default_tags.yml` for an working example.
 
 
 # Invoking the script
 
-## Checking the state file
+## Inspecting terraform state file for tag compliance
 
-You check the tag compliance in the plan file by running
+You check the tag compliance in the state file by invoking the script as follows:
 
 ```
 python application.py -v --input_type state --input_file terraform.tfstate 
 ```
 
-## Checking the plan file
+## Inspecting terraform plan file for tag compliance
 
-First you need to generate a json output of your terraform plan using the following commands:
+Before you can inspect the plan file, you need to generate a json output of your terraform plan using the following commands:
 
 ```
 terraform plan -out terraform.plan
 terraform show -json terraform.plan | jq > terraform.plan.json
 ```
 
-and then You check the tag compliance in the plan file by running
+and you check the tag compliance in the plan file by invoking the script as follows:
 
 ```
 python application.py -v --input_type state --input_file terraform.plan.json 
 ```
 
-The script will output which resources are not in compliance with your tag policies.
+The script will output the resources along with their compliance status.
 
 For more information about other arguments, invoke the script `python application.py --help`.
 
