@@ -4,8 +4,6 @@
 # running an auto apply, and similarly deleting any deployed resource
 # in AWS by running an auto destroy.
 
-export AWS_PROFILE=your-aws-profile
-
 terraform fmt
 terraform plan -out terraform.plan
 terraform show -json terraform.plan | jq | sed -r 's/:([0-9]{4})[0-9]+:/:\1********:/g' > terraform.plan.json > ../examples/terraform.plan.json
