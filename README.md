@@ -6,9 +6,9 @@ Script to check that AWS managed resources in the terraform state file or terraf
 
 You want to be sure that the tag policy defined in your organization is being enforced. It is easy miss a tag when writing your terraform code; hence this script can provide you some assistance on identifying those AWS resources missing any of the required tags.
 
-## Supported versions for state and plan files
+## Supported format versions for state and plan files
 
-Currently, format version **4** for the state file, and version **1.1** for the plan file are supported.
+Currently, version **4** for the state file, and version **1.1** for the plan file are supported.
 
 ## Defining tag policy
 
@@ -84,7 +84,7 @@ For more information about other arguments, invoke the script `python applicatio
 
 # Trying the script
 
-The *terraform* contains a configuration file you can use to generate a plan and a state files. Navigate to the folder *terraform* and run the script *./terraform.sh*. This script will create a plan, apply, and then destroy the resources; additionally, it will copy the plan and state files to the *examples* folder.
+The *terraform* folder contains the configuration files you can use to generate a plan and a state files. Navigate to the folder and run the script *./terraform.sh* (you need an AWS account). This script will create a plan file,execute and apply, and then destroy the resources; additionally, it will copy the just-created plan and state files to the *examples* folder.
 
 
 ## Checking tag compliance in the plan file
