@@ -1,0 +1,18 @@
+# List of the default required tags. Presence of these
+# tags will be checked in all resources.
+default_tags:
+  - Tag1 
+  - Tag2
+  - Tag3
+
+# Additional tags may be required by (a) particular aws resource(s).
+# Use the name of the resource_type in terraform 
+addtional_tags:
+  resource_type:
+    - Tag4
+
+# Mandatory tags that can be ignored by a particular aws resource(s).
+# Use the name of the resource_type in terraform 
+ignored_tags:
+  resource_type:
+    - Tag5
