@@ -16,7 +16,7 @@ You can define your tag policy by creating a file with the following sections:
 
 ### Default tags (required)
 
-List of the default tags to apply to all resources:
+List the default tags to apply to all resources:
 
 ```
 default_tags:
@@ -27,13 +27,13 @@ default_tags:
 
 ### Additional tags (optional)
 
-Addional tags to appy to particular resource types
+Addional tags to apply to particular resource types
 
 ```
 addtional_tags:
   resource_type:
     - Tag4
-  resource_type
+  resource_type:
     - Tag6
 ```
 
@@ -49,14 +49,14 @@ ignored_tags:
     - Tag8
 ```
 
-You can check the template `.default_tags.yml` in this folder more details or the file `examples/.default_tags.yml` for an working example.
+You can check the template `.default_tags.yml` in this folder for more details or the file `examples/.default_tags.yml` for an working example.
 
 
 # Invoking the script
 
 ## Inspecting terraform state file for tag compliance
 
-You check the tag compliance in the state file by invoking the script as follows:
+You can check the tag compliance in the state file by invoking the script as follows:
 
 ```
 python application.py -v --input_type state --input_file terraform.tfstate 
@@ -71,7 +71,7 @@ terraform plan -out terraform.plan
 terraform show -json terraform.plan | jq > terraform.plan.json
 ```
 
-and you check the tag compliance in the plan file by invoking the script as follows:
+Then you can check the tag compliance in the plan file by invoking the script as follows:
 
 ```
 python application.py -v --input_type state --input_file terraform.plan.json 
@@ -84,7 +84,7 @@ For more information about other arguments, invoke the script `python applicatio
 
 # Trying the script
 
-The *terraform* folder contains the configuration files you can use to generate a plan and a state files. Navigate to the folder and run the script *./terraform.sh* (you need an AWS account). This script will create a plan file,execute and apply, and then destroy the resources; additionally, it will copy the just-created plan and state files to the *examples* folder.
+The *terraform* folder contains the configuration files you can use to generate a plan and state file. Navigate to the folder and run the script *./terraform.sh* (you need an AWS account). This script will create a plan file,execute and apply, and then destroy the resources; additionally, it will copy the just-created plan and state files to the *examples* folder.
 
 
 ## Checking tag compliance in the plan file
@@ -152,7 +152,7 @@ python application.py -v \
 you should get the following output:
 
 ```
-etching managed AWS resources from State file.
+Fetching managed AWS resources from State file.
 ----------------------------------------------------------------------
 name          : policy_1
 arn           : arn:aws:iam::4468********:policy/example_policy_1
